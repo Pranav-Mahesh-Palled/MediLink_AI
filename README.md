@@ -90,8 +90,3 @@ Response includes:
 ### Option 2: Railway
 - Connect the repo
 - Use the same start command
-
-### Notes
-- This repo is intentionally simple and portable for hackathon use.
-- The frontend and backend are separated so the judge can inspect the code clearly.
-- Add your deployed link and GitHub repo link in the submission form.
