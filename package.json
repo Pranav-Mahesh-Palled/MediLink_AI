@@ -1,0 +1,16 @@
+{
+  "name": "medilink-ai",
+  "version": "1.0.0",
+  "description": "Connected ambulance triage prototype for hackathon submission",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

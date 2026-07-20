@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediLink AI — Connected Ambulance Triage</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">M</div>
+        <div>
+          <h1>MediLink AI — Connected Ambulance Triage</h1>
+          <p>Hackathon-ready prototype for emergency response, AI triage, and hospital routing</p>
+        </div>
+      </div>
+      <div class="btns">
+        <div class="pill">Core AI Active</div>
+        <div class="pill">Deployable Demo</div>
+        <div class="pill">Realtime Web App</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="stack">
+        <div class="card">
+          <div class="head">
+            <div>
+              <h2>Emergency Intake</h2>
+              <div class="sub">Describe the incident. The triage engine will estimate urgency, response mode, and the best hospital type.</div>
+            </div>
+            <span class="tag">Triage</span>
+          </div>
+          <div class="body">
+            <div class="row">
+              <div>
+                <label>Patient Name</label>
+                <input id="name" placeholder="e.g., Rahul" value="Ananya" />
+              </div>
+              <div>
+                <label>Age</label>
+                <input id="age" type="number" min="0" value="58" />
+              </div>
+            </div>
+            <div class="spacer"></div>
+            <div class="row">
+              <div>
+                <label>Incident Type</label>
+                <select id="incident">
+                  <option value="cardiac">Chest pain / cardiac distress</option>
+                  <option value="stroke">Possible stroke</option>
+                  <option value="accident">Road accident / trauma</option>
+                  <option value="breathing">Breathing difficulty</option>
+                  <option value="fever">High fever / infection</option>
+                  <option value="other">Other emergency</option>
+                </select>
+              </div>
+              <div>
+                <label>Location (km from nearest hub)</label>
+                <input id="distance" type="number" min="0" step="0.1" value="6.8" />
+              </div>
+            </div>
+            <div class="spacer"></div>
+            <div class="row3">
+              <div><label><input id="chest" type="checkbox" checked>Chest pain</label></div>
+              <div><label><input id="breath" type="checkbox" checked>Breathing issue</label></div>
+              <div><label><input id="bleed" type="checkbox">Severe bleeding</label></div>
+            </div>
+            <div class="spacer"></div>
+            <div class="row3">
+              <div><label><input id="unconscious" type="checkbox">Unconscious</label></div>
+              <div><label><input id="strokeSigns" type="checkbox">Stroke signs</label></div>
+              <div><label><input id="pregnant" type="checkbox">Pregnant patient</label></div>
+            </div>
+            <div class="spacer"></div>
+            <label>Symptoms / Notes</label>
+            <textarea id="symptoms">Sudden chest pain, sweating, dizziness and shortness of breath for the last 20 minutes.</textarea>
+            <div class="spacer"></div>
+            <div class="btns">
+              <button class="primary" id="triageBtn">Run AI Triage</button>
+              <button class="secondary" id="cardiacBtn">Load Cardiac Case</button>
+              <button class="secondary" id="strokeBtn">Load Stroke Case</button>
+              <button class="secondary" id="accidentBtn">Load Accident Case</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="head">
+            <div>
+              <h2>AI Transparency & Logic</h2>
+              <div class="sub">The engine combines symptom signals, age risk, and incident pattern to produce a triage recommendation.</div>
+            </div>
+            <span class="tag">Explainable AI</span>
+          </div>
+          <div class="body">
+            <div class="debug" id="debug">Score model loading...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <div class="head">
+            <div>
+              <h2>Response Dashboard</h2>
+              <div class="sub">A single screen a judge can understand in seconds: severity, ETA, destination hospital, and live response steps.</div>
+            </div>
+            <span class="tag">Live Demo</span>
+          </div>
+          <div class="body">
+            <div class="metric-grid">
+              <div class="metric">
+                <div class="k">Urgency</div>
+                <div class="v" id="urgencyText">High</div>
+                <div class="s" id="urgencySub">Needs ambulance and hospital readiness</div>
+              </div>
+              <div class="metric">
+                <div class="k">AI Confidence</div>
+                <div class="v" id="confidenceText">84%</div>
+                <div class="s">Based on symptom pattern completeness</div>
+              </div>
+              <div class="metric">
+                <div class="k">Ambulance ETA</div>
+                <div class="v" id="etaText">14 min</div>
+                <div class="s" id="etaSub">Distance-aware dispatch estimate</div>
+              </div>
+              <div class="metric">
+                <div class="k">Recommended Facility</div>
+                <div class="v small" id="facilityText">Cardiac Center</div>
+                <div class="s" id="facilitySub">Nearest equipped hospital type</div>
+              </div>
+            </div>
+
+            <div class="spacer"></div>
+            <div class="progress"><div class="bar" id="bar"></div></div>
+            <div class="spacer"></div>
+            <div class="badge high" id="badge">HIGH PRIORITY</div>
+
+            <div class="spacer"></div>
+            <div class="split">
+              <div class="mini">
+                <div class="section-title"><span class="dot"></span>AI Recommendation</div>
+                <ul class="list" id="recommendation"></ul>
+              </div>
+              <div class="mini">
+                <div class="section-title"><span class="dot"></span>Live Risk Signals</div>
+                <div class="kv">
+                  <div><strong>Life-threatening signs</strong><span id="ltSigns">2</span></div>
+                  <div><strong>Transport mode</strong><span id="modeText">Ambulance</span></div>
+                  <div><strong>Escalation</strong><span id="escalationText">Paramedic + ER</span></div>
+                  <div><strong>Priority lane</strong><span id="priorityLane">Yes</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="spacer"></div>
+            <div class="section-title"><span class="dot"></span>Dispatch Timeline</div>
+            <div class="timeline" id="timeline">
+              <div class="step done"><div class="n">1</div><div><h4>Symptom intake completed</h4><p>Patient details captured and analyzed by the triage engine.</p></div></div>
+              <div class="step alert"><div class="n">2</div><div><h4>Emergency unit notified</h4><p>Ambulance + nearest appropriate hospital alert prepared.</p></div></div>
+              <div class="step"><div class="n">3</div><div><h4>Route optimized</h4><p>Shortest safe route selected based on distance and priority.</p></div></div>
+              <div class="step"><div class="n">4</div><div><h4>Patient handover</h4><p>Hospital receives summary, symptoms, and status before arrival.</p></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="head">
+            <div>
+              <h2>Hospital Recommendation Map</h2>
+              <div class="sub">Nearest facility selection based on the emergency type and current risk.</div>
+            </div>
+            <span class="tag">Routing</span>
+          </div>
+          <div class="body">
+            <div class="map">
+              <svg viewBox="0 0 1000 400" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="road" x1="0" x2="1">
+                    <stop offset="0%" stop-color="rgba(93,214,255,.15)"/>
+                    <stop offset="100%" stop-color="rgba(124,156,255,.22)"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0,320 C120,290 180,240 260,235 C360,228 420,290 520,282 C630,274 670,180 770,170 C860,162 910,210 1000,180" fill="none" stroke="url(#road)" stroke-width="10" stroke-linecap="round"/>
+                <path d="M0,250 C120,220 190,180 290,188 C410,200 460,115 580,126 C690,136 730,250 860,245 C930,242 965,230 1000,220" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="5" stroke-linecap="round"/>
+              </svg>
+              <div class="pin">📍</div>
+              <div class="label" id="mapLabel">Nearest route: St. Mary’s Emergency — 6.8 km</div>
+              <div class="label right">ETA optimization active</div>
+            </div>
+            <div class="spacer"></div>
+            <div id="hospitalList" class="stack" style="gap:10px"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <div class="head">
+            <div>
+              <h2>Incident Cases</h2>
+              <div class="sub">Quick presets for demoing different real-world emergencies in seconds.</div>
+            </div>
+            <span class="tag">Scenarios</span>
+          </div>
+          <div class="body">
+            <div class="smallgrid">
+              <button class="casebtn" id="caseCardiac">Cardiac emergency<small>Chest pain + sweating + shortness of breath</small></button>
+              <button class="casebtn" id="caseStroke">Stroke suspicion<small>Slurred speech + facial droop + one-sided weakness</small></button>
+              <button class="casebtn" id="caseAccident">Road accident<small>Bleeding + trauma + possible fracture</small></button>
+            </div>
+            <div class="spacer"></div>
+            <div class="smallgrid">
+              <button class="casebtn" id="caseBreathing">Respiratory distress<small>Oxygen need + wheezing + anxious breathing</small></button>
+              <button class="casebtn" id="caseFever">Severe fever<small>High temperature + weakness + dehydration</small></button>
+              <button class="casebtn" id="demoLoop">Run live demo<small>Simulate updates every few seconds</small></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="head">
+            <div>
+              <h2>Readiness & Trust</h2>
+              <div class="sub">The prototype is designed to look and behave like a deployable product, not a slide deck.</div>
+            </div>
+            <span class="tag">Production-minded</span>
+          </div>
+          <div class="body">
+            <div class="metric-grid">
+              <div class="metric"><div class="k">Status</div><div class="v small" id="statusText">Prototype</div><div class="s">Working interactive MVP</div></div>
+              <div class="metric"><div class="k">Workflow</div><div class="v small">Intake → AI → Dispatch</div><div class="s">End-to-end visible</div></div>
+            </div>
+            <div class="spacer"></div>
+            <div class="mini">
+              <div class="section-title"><span class="dot"></span>Real-world considerations</div>
+              <ul class="list">
+                <li>Emergency severity is surfaced immediately.</li>
+                <li>Nearest suitable hospital is recommended.</li>
+                <li>Dispatch summary is generated before arrival.</li>
+                <li>Patient data can be sent to hospital/ambulance systems.</li>
+                <li>Edge cases and failures are logged in the case history.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="head">
+            <div>
+              <h2>Case History</h2>
+              <div class="sub">Recent triage runs for demonstrating repeatability and multi-case handling.</div>
+            </div>
+            <span class="tag">Audit</span>
+          </div>
+          <div class="body">
+            <div class="stack" id="history" style="gap:10px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
